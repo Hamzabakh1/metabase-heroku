@@ -33,4 +33,4 @@ fi
 echo "JAVA_OPTS: $JAVA_OPTS"
 export JAVA_OPTS
 
-/app/run_metabase.sh
+exec /app/run_metabase.sh

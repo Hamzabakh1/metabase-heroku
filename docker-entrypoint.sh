@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Bind to Heroku dynamic port
-if [ "$PORT" ]; then
-    export MB_JETTY_PORT="$PORT"
+echo "🔧 Initializing Metabase Docker Entrypoint..."
+
+# Bind to Heroku's dynamic port
+if [[ -n "${PORT:-}" ]]; then
+  export MB_JETTY_PORT="$PORT"
+  echo "📡 PORT set to $MB_JETTY_PORT"
 fi
 
-# Use DATABASE_URL if provided
-if [ "$DATABASE_URL" ]; then
-    export MB_DB_CONNECTION_URI="$DATABASE_URL"
+# Convert DATABASE_URL to Metabase-compatible connection URI
+if [[ -n "${DATABASE_URL:-}" ]]; then
+  export MB_DB_CONNECTION_URI="$DATABASE_URL"
+  echo "🔗 Using DATABASE_URL for MB_DB_CONNECTION_URI"
 fi
 
-# Java memory optimizations for Heroku
-JAVA_OPTS="$JAVA_OPTS -XX:+UnlockExperimentalVMOptions"
+# JVM tuning for Heroku containers
+JAVA_OPTS+=" -XX:+UnlockExperimentalVMOptions"
 JAVA_OPTS+=" -XX:+UseContainerSupport"
 JAVA_OPTS+=" -XX:-UseGCOverheadLimit"
 JAVA_OPTS+=" -XX:+UseCompressedOops"
@@ -23,13 +28,13 @@ JAVA_OPTS+=" -server"
 JAVA_OPTS+=" -Djava.awt.headless=true"
 JAVA_OPTS+=" -Dfile.encoding=UTF-8"
 
-# Optional timezone
-if [ "$JAVA_TIMEZONE" ]; then
-    echo "  -> Timezone setting detected: $JAVA_TIMEZONE"
-    JAVA_OPTS+=" -Duser.timezone=$JAVA_TIMEZONE"
+# Optional timezone support
+if [[ -n "${JAVA_TIMEZONE:-}" ]]; then
+  echo "🌍 Timezone setting detected: $JAVA_TIMEZONE"
+  JAVA_OPTS+=" -Duser.timezone=$JAVA_TIMEZONE"
 fi
 
-echo "JAVA_OPTS: $JAVA_OPTS"
+echo "🚀 Launching Metabase with JAVA_OPTS: $JAVA_OPTS"
 export JAVA_OPTS
 
 # Start Metabase

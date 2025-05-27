@@ -3,13 +3,13 @@ set -euo pipefail
 
 echo "🔧 Initializing Metabase Entrypoint..."
 
-# 1) Bind Metabase to the Heroku-assigned port
+# 1) Bind to Heroku-assigned PORT
 if [[ -n "${PORT:-}" ]]; then
   export MB_JETTY_PORT="$PORT"
   echo "📡 MB_JETTY_PORT set to $MB_JETTY_PORT"
 fi
 
-# 2) Point Metabase at your Heroku Postgres
+# 2) Point Metabase at Heroku Postgres
 if [[ -n "${DATABASE_URL:-}" ]]; then
   export MB_DB_CONNECTION_URI="$DATABASE_URL"
   echo "🔗 MB_DB_CONNECTION_URI set from DATABASE_URL"
@@ -28,10 +28,14 @@ JAVA_OPTS+=" -server"
 JAVA_OPTS+=" -Djava.awt.headless=true"
 JAVA_OPTS+=" -Dfile.encoding=UTF-8"
 
-# 4) Explicit site URL to avoid host‐validation loops
-#    (Metabase will read this env var for links and redirects)
+# 4) **Limit maximum heap to 300 MB** to avoid OOM kills on a 512 MB dyno
+JAVA_OPTS+=" -Xmx300m"  
+# 5) Also limit heap as a percentage of container RAM
+JAVA_OPTS+=" -XX:MaxRAMPercentage=75.0"
+
+# 6) (Optional) Explicit site URL to avoid host‐validation loops
 if [[ -n "${MB_SITE_URL:-}" ]]; then
-  echo "🌐 MB_SITE_URL is set to $MB_SITE_URL"
+  echo "🌐 MB_SITE_URL is $MB_SITE_URL"
 fi
 
 echo "🚀 Launching Metabase with JAVA_OPTS: $JAVA_OPTS"

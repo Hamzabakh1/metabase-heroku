@@ -4,8 +4,3 @@ build:
 
 run:
   web: /app/docker-entrypoint.sh
-
-health-check:
-  path: /api/health
-  interval: 10
-  timeout: 10

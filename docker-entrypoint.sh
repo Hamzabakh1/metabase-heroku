@@ -38,4 +38,5 @@ echo "🚀 Launching Metabase with JAVA_OPTS: $JAVA_OPTS"
 export JAVA_OPTS
 
 # Start Metabase
-exec /app/run_metabase.sh
+exec java $JAVA_OPTS -jar /app/metabase.jar
+

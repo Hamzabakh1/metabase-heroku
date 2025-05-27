@@ -1,5 +1,5 @@
 # Use the official Metabase Enterprise image
-FROM metabase/metabase-enterprise:v1.53.14
+FROM metabase/metabase:v0.54.10.x
 
 # Set workdir for clarity
 WORKDIR /app

@@ -1,15 +1,15 @@
-# Use the official Metabase image
+# Use the official Metabase OSS image (no ‘.x’ tag)
 FROM metabase/metabase:v0.54.10
 
 # Set working directory
 WORKDIR /app
 
-# Copy scripts
+# Copy entrypoint and startup scripts
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-COPY run_metabase.sh /app/run_metabase.sh
+COPY run_metabase.sh    /app/run_metabase.sh
 
-# Make them executable
+# Make scripts executable
 RUN chmod +x /app/docker-entrypoint.sh /app/run_metabase.sh
 
-# Set the entrypoint
+# Entrypoint for all dynos
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
